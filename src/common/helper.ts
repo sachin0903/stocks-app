@@ -28,6 +28,18 @@ export const geometricMean = (val: number[]) => {
     return gm;
 }
 
+export const volumeWightedPrice = (...stocks) => {
+    if (stocks.length===1&&Array.isArray(stocks[0])){
+        stocks=stocks[0]
+    }
+    if (!stocks.length) {
+        return 0
+    }
+
+    return stocks.reduce((s,x)=>s+(x.price*x.noOfShares),0)/
+        stocks.reduce((s,x)=>s+Number(x.noOfShares),0)||0;
+  }
+
 export const orderBy = (stocks: any) => {
     return stocks.sort((a, b) => {
         const dateA = new Date(a.timestamp);
@@ -56,13 +68,15 @@ export const calculateData = (stocks: any, stock: any) => {
         const peRatioData =  dividend !==0 ? peRatio(stocksData[0].price, dividend) : 0;
 
         const geoMean = geometricMean(stocksData.map(data=> data.price));
+
+        const weightedPrice = volumeWightedPrice(stocksData);
         
         return {
             dividend,
             geometricMean:geoMean,
             peRatio: peRatioData,
             stockSymbol:stocksData[0].stockSymbol,
-            volumeWeightedPrice:0
+            volumeWeightedPrice:weightedPrice
         };
 
     }
